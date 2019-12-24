@@ -17,14 +17,15 @@ public class Main {
             int findNote = curLine.indexOf("//");
             if (findNote != -1)
                 curLine = curLine.substring(0, findNote);
-            content.append(curLine + " ");
+            //content.append(curLine + " ]");
+            expr.runList(expr.generateList("[ " + curLine + " ]"));
         }
-        content.append("]");
+        /*content.append("]");
         try {
             expr.runList(expr.generateList(content.toString()));
         }
         catch (MyError e) {
             System.out.println(e + "    From:   " + content.toString());
-        }
+        }*/
     }
 }

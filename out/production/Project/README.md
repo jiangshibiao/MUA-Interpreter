@@ -6,8 +6,7 @@ It's an interpreter for the functional programming language Mua implemented in J
 
 ## What's Mua?
 
-Mua (**M**ade-**u**p l**a**nguage) is a functional programming language created by my instructor Kai Weng.
-It is well defined and can be easily parsed without the knowledge of compiling principle.
+Mua (**M**ade-**u**p l**a**nguage) is a functional programming language.
 
 #### Basic concept
 
@@ -20,42 +19,26 @@ It is well defined and can be easily parsed without the knowledge of compiling p
     - `bool`: only two value can be assigned: `true` and `false`.
     - `list`: The *literal notation* of *list* is a pair of bracket. i.e. Starts with `[` and ends with `]`. The elements in *list* are seperated by spaces, each of them serves as a element in this *list*. *list* can be nested, like `[1234.0 2 "Hello [true "false]]`.
 + Although stored as `word`, elements should be changed automatically if necessary. For example, the value of `or true "false` is `true`, and the value of `add "1.0 2` is `3.0`.
-+ `name` is a subset of `word` which satisfied that all the characters are in `[0-9, A-Z, a-z, _]` and the first character isn't a digit. `name` is used to define variables and functions, and is case sensitive.
-+ Functions will be executed in prefix order.
++ `name` is a part of `word` which satisfied that all its characters are in `[0-9, A-Z, a-z, _]`. `name` is case sensitive.
 
-#### Some important tips
+#### Basic funtions
 
-+ Review the definition of `list`: All the elements seperated by space belong to  it without parsing. So `[(2+4)]` $\ne$ `[6]`, and the elements of `[(2 +4)]` are `(2` and `+4`.
-+ A great advantange of mua is: One can quickly distinguish a phrase by looking at its first character.
-	- If it is `"`, then a `word` comes later.
-	- If it is a digit or `-`, then a `number` comes later.
-	- If it is `[`, then a `list` comes later.
-	- If it is `(`, then a expression comes later.
-	- If it is in `[+,-,*,/,%]`, then it is a operator.
-	- Otherwise, if this phrase isn't equal to `true` or `false`(In this case, a `bool` comes later), then it must be a function.
-
-
-#### System Funtions
-
-+ some important functions:
+- important functions:
     - `make <name> <value>`： Bind `value` to `name`.
     - `thing <name>`: Return the value that `name` binds to.
     - `:<word>`：Syntactic sugar. The same as `thing "word`.
-    	```
+    - `erase <name>`：Erase the connection between `name` and its binding value.
+    - `print <value>`：Print out `value`.
+    - `read`：Read a word from input.
+    - `readlinst`：Read a list from input, elements are seperated by space.
+        ```
         make "a 1
         make "b "a
         print thing "a // => 1.0
         print thing :b // => 1.0
         ```
-    - `erase <name>`：Erase the connection between `name` and its binding value.
-    - `print <value>`：Print out `value`.
-    - `read`：Read a `word` from input. Do not need *literal notation* `"`.
-    - `readlist`：Read a `list` from input, elements are seperated by space. Do not need *literal notation* `[` and `]`.
-    - `if <bool> <list1> <list2>`: if `bool` is `true` then do `list1`, else do `list2`.
-	- `repeat <number> <list>` Execute `list` for `number` numbers.
 
-
-+ functions that check data types:
+- functions that check data types:
     ```
     print isnumber 7654321 // => true
     print isword "some_word // => true
@@ -63,23 +46,26 @@ It is well defined and can be easily parsed without the knowledge of compiling p
     print isbool false // => true
     ```
 
-+ functions which is similar to operators
+- functions which is similar to operators
   - `add`, `sub`, `mul`, `div`, `mod`：`<operator> <number> <number>`
   - `eq`, `gt`, `lt`：`<operator> <number|word> <number|word>`
   - `and`, `or`：`<operator> <bool> <bool>`
   - `not`：`not <bool>`
 
-Continued...
+- All functions will be executed in prefix order. `sub add 1 4 2 //->3`
 
-#### Functions defined by user
+#### Advanced functions
 
-+ The form for definition: `make <name> [<list1>, <list2>]`.
-	- `<list1>` is a list contain all the parameters' name that may be used in function.
-	- `<list2>` is the function body, which is made up by several operaion lists.
+- `if <bool> <list1> <list2>`: if `bool` is `true` then do `list1`, else do `list2`.
+- `repeat <number> <list>` Execute `list` for `number` numbers.
+- functions defined by user
+	+ The form for definition: `make <name> [<list1>, <list2>]`.
+	+ `<list1>` is a list contain all the parameters' name that may be used in function.
+	+ `<list2>` is the function body, which is made up by several operaion lists.
     ```
     make "prt [
-        [a]
-        [print :a]
+     [a]
+     [print :a]
     ]
     ```
     + The form for call: `<name> <arglist>`
@@ -88,20 +74,18 @@ Continued...
     make "b 233
     prt "b
     ```
-- useful system funtions helped for designing funtion
+- useful system funtions helped for defined funtion
 	+ `stop`: Stop this function immediately.
 	+ `output<value>`: The return value of this function is `value`.
 	+ `export <name>`: Export the value of `name` from local space to the main space.
 
 #### Expressions
 
-+ For convenience, expression should be surrounded by `()`.
-+ Expressions can be mixed up with functions and other expressions.
-+ Consecutive negative indications should be supported.
++ For convenience, expression must be surrounded by `()`.
++ Expressions can be mixed up with functions.
 ```
 print (:a + sub 4 3 * 2) // => 3.0 (1 + (4 - 3) * 2 = 3)
 print (:a + sub 4 (3*2)) // => -1.0 (1 + (4 - (3*2)) = -1)
-print (1+---2) // --> -1.0
 ```
 
 Continued...
