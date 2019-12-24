@@ -50,14 +50,16 @@ public class Expression {
                         "Expression starts by ( but not find ) in the end.");
         Stack<Character> optStack = new Stack<>();
         Stack<Data> dataStack = new Stack<>();
+        boolean lastOperator = true;
         for (int i = 0; i < str.length(); i++) {
             if (isBlank(str.charAt(i))) continue;
-            if (operatorMap.containsKey(str.charAt(i))) {
+            if (operatorMap.containsKey(str.charAt(i)) && !lastOperator) {
                 //It is an operator.
                 if (dataStack.isEmpty())
                     throw new MyError(MyError.ErrorType.SyntaxError,
                             "No parameter is supported before operator " + str.charAt(i) + ".");
                 optStack.push(str.charAt(i));
+                lastOperator = true;
                 ///*debug*/System.out.println(str.charAt(i));
             } else {
                 //It is a piece of data.
@@ -80,6 +82,7 @@ public class Expression {
                     ///*debug*/System.out.println(resultData.data + " " + resultData.end);
                 }
                 i = resultData.end;
+                lastOperator = false;
             }
         }
         Stack<Character>optReverseStack = new Stack<>();
@@ -187,8 +190,10 @@ public class Expression {
                     throw new MyError(MyError.ErrorType.SyntaxError, "Miss ).");
                 return new Triple(calcExpression(str.substring(i + 1, j)), j, false);
             }
-            if (cur == ']')
-                throw new MyError(MyError.ErrorType.SyntaxError, "Find ] before [.");
+            if (cur == ']') {
+                //throw new MyError(MyError.ErrorType.SyntaxError, "Find ] before [.");
+                continue;
+            }
             if (cur == ')')
                 throw new MyError(MyError.ErrorType.SyntaxError, "Find ) before (.");
             if (cur == ':') {
@@ -225,6 +230,7 @@ public class Expression {
     }
     int nextWord(String str, int i){
         int j = i;
+        for (; j < str.length() && str.charAt(j) == '-'; j++);
         for (; j < str.length() && !isBlank(str.charAt(j)) && !operatorMap.containsKey(str.charAt(j)); j++);
         return j;
     }

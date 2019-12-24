@@ -14,7 +14,7 @@ public class div extends Operation{
         /*if (u.type != Data.Type.NUMBER && v.type != Data.Type.NUMBER)
             throw new MyError(MyError.ErrorType.TypeError,
                     "One of two parameters in function [div] should be NUMBER.");*/
-        if (v.getNumber() == 0)
+        if (Math.abs(v.getNumber()) <= 1e-9)
             throw new MyError(MyError.ErrorType.ValueError,
                     "Divided by zero!");
         ReturnValue = new Data(u.getNumber() / v.getNumber());

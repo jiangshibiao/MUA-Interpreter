@@ -7,9 +7,9 @@ public class erall extends Operation{
     public erall(){
         name = "erall";
         hasReturnValue = false;
-        arg_num = 1;
+        arg_num = 0;
     }
     public void exec(NameSpace space) throws MyError{
-        space.thisSpaceListName();
+        space.thisSpaceRemoveAllName();
     }
 }

@@ -2,9 +2,10 @@ package src.mua;
 import src.mua.MyError;
 
 import javax.security.auth.callback.CallbackHandler;
+import java.io.Serializable;
 import java.util.Vector;
 
-public class Data {
+public class Data implements Serializable {
     public enum Type{
         OP, BOOLEAN, NUMBER, WORD, LIST, NONE
     }
@@ -15,6 +16,7 @@ public class Data {
     //If it is a operation, [valWord] records its name
     private boolean valBoolean;
     private Vector<Data> valList;
+
 
     public Data(double data){
         type = Type.NUMBER;
@@ -27,6 +29,21 @@ public class Data {
     public Data(Vector<Data>data){
         type = Type.LIST;
         valList = data;
+    }
+    public Data(Data old) throws MyError{
+        if (old.type == Type.LIST){
+            valList = new Vector<Data>();
+            Vector<Data>oldList = old.getList();
+            for (int i = 0; i < oldList.size(); i++)
+                valList.add(new Data(oldList.get(i)));
+            type = Type.LIST;
+        }
+        else{
+            type = old.type;
+            valNumber = old.valNumber;
+            valWord = old.valWord;
+            valBoolean = old.valBoolean;
+        }
     }
     public Data(String literal, boolean startLiteral) throws MyError{
         if (!startLiteral){
@@ -47,8 +64,10 @@ public class Data {
                 type = Type.OP;
                 valWord = literal;
             } else if (Character.isDigit(literal.charAt(0)) || literal.charAt(0) == '-') {
+                int k = 0, sign = 1;
+                for (; k < literal.length() && literal.charAt(k) == '-'; k++) sign *= -1;
                 type = Type.NUMBER;
-                valNumber = Double.parseDouble(literal);
+                valNumber = Double.parseDouble(literal.substring(k)) * sign;
             }
             else
                 throw new MyError(MyError.ErrorType.TypeError,
@@ -117,6 +136,13 @@ public class Data {
             throw new MyError(MyError.ErrorType.TypeError,
                     "Expect [LIST] but find [" + type + "].");
         return valList;
+    }
+
+    public void listAdd(Data t) throws MyError{
+        if (type != Type.LIST)
+            throw new MyError(MyError.ErrorType.UnexpectedError,
+                    "Error in listAdd.");
+        valList.add(t);
     }
 
     @Override

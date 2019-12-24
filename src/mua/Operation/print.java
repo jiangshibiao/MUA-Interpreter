@@ -10,6 +10,11 @@ public class print extends Operation {
         arg_num = 1;
     }
     public void exec(NameSpace Space) throws MyError{
-        System.out.println(args.get(0));
+        Data u = args.get(0);
+        String uString = "" + u;
+        //System.out.println("!!" + uString);
+        uString = uString.replace("[ ", "[");
+        uString = uString.replace(" ]", "]");
+        System.out.println((u.type != Data.Type.LIST) ? u : uString.substring(1, uString.length() - 1));
     }
 }
