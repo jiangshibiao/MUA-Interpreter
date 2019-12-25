@@ -108,4 +108,14 @@ Continued...
 
 ## About this interpreter
 
-Continued...
+#### Basic Concept
+
+~~~mermaid
+graph TB
+    id1((myServer))-->id2[clientQueue]
+    id1-->id3[messageQueue]
+    id2==1..*==>id4((clientHandle))
+    id4-->id5[socket]
+    id4-->id6[ID]
+    id4-.parent.->id1
+~~~
